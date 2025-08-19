@@ -29,7 +29,7 @@ const classSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["DEMO", "REGULAR", "WORKSHOP"],
+      enum: ["DEMO", "REGULAR", "WEBINAR"],
       default: "REGULAR",
     },
   },
