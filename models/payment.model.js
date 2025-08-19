@@ -34,7 +34,7 @@ const paymentSchema = new mongoose.Schema(
     },
     paymentType: {
       type: String,
-      enum: ["CONFIRMATION", "FULL", "MONTHLY"],
+      enum: ["CONFIRMATION", "FULL", "MONTHLY", "OFFLINE"],
       required: true,
     },
     invoiceNumber: {

@@ -7,13 +7,23 @@ const sendOTP = async (phone, otp) => {
     console.log(`Sending OTP ${otp} to ${phone}`);
 
     // Example with Fast2SMS (replace with your actual service)
-    const response = await axios.post("https://www.fast2sms.com/dev/bulkV2", {
-      authorization: process.env.FAST2SMS_API_KEY,
-      route: "otp",
-      variables_values: otp,
-      flash: 0,
-      numbers: phone,
-    });
+    const response = await axios.post(
+      "https://www.fast2sms.com/dev/bulkV2",
+      {
+        // route: "otp",
+        route: "q",
+        variables_values: otp,
+        flash: 0,
+        numbers: phone,
+        message: `Your OTP is: ${otp}`,
+      },
+      {
+        headers: {
+          authorization: process.env.FAST2SMS_API_KEY,
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     return { success: true };
   } catch (error) {

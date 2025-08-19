@@ -28,23 +28,26 @@ const sendOtp = async (req, res) => {
     });
 
     // Send OTP via SMS
-    const smsResult = await sendOTP(phone, otp);
+    // const smsResult = await sendOTP(phone, otp);
 
-    if (!smsResult.success) {
-      return res.status(500).json({
-        success: false,
-        message: "Failed to send OTP",
-      });
-    }
+    // if (!smsResult.success) {
+    //   return res.status(500).json({
+    //     success: false,
+    //     message: "Failed to send OTP",
+    //     error: smsResult.error,
+    //   });
+    // }
 
     res.json({
       success: true,
       message: "OTP sent successfully",
+      otp: otp,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
       message: "Server error",
+      error: error.message,
     });
   }
 };
@@ -130,7 +133,7 @@ const verifyOtp = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Server error",
+      message: error.message,
     });
   }
 };

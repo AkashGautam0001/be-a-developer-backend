@@ -5,11 +5,51 @@ const Course = require("../models/course.model");
 const Enrollment = require("../models/enrollment.model");
 const Payment = require("../models/payment.model");
 
+const register = async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
+
+    if (!username || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Username, email, and password are required",
+      });
+    }
+
+    // Check if admin already exists
+    const existingAdmin = await Admin.findOne({ email: email.toLowerCase() });
+    if (existingAdmin) {
+      return res.status(409).json({
+        success: false,
+        message: "Admin already exists",
+      });
+    }
+
+    // Create admin
+    const admin = new Admin({
+      username: username,
+      email: email.toLowerCase(),
+      password: password,
+    });
+    await admin.save();
+
+    res.status(201).json({
+      success: true,
+      message: "Admin registered successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
 const login = async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
-    if (!username || !password) {
+    if (!email || !password) {
       return res.status(400).json({
         success: false,
         message: "Username and password are required",
@@ -17,7 +57,7 @@ const login = async (req, res) => {
     }
 
     // Find admin
-    const admin = await Admin.findOne({ username });
+    const admin = await Admin.findOne({ email: email.toLowerCase() });
     if (!admin) {
       return res.status(401).json({
         success: false,
@@ -85,29 +125,29 @@ const dashboardStats = async (req, res) => {
     });
 
     const activeSubscriptions = await Enrollment.countDocuments({
-      status: "active",
+      status: "ACTIVE",
     });
 
     const monthlySubscribers = await Enrollment.countDocuments({
-      paymentMethod: "monthly",
-      status: "active",
+      paymentMethod: "MONTHLY",
+      status: "ACTIVE",
     });
 
     const fullPaymentSubscribers = await Enrollment.countDocuments({
-      paymentMethod: "full",
-      status: "active",
+      paymentMethod: "FULL",
+      status: "ACTIVE",
     });
 
     // Revenue calculations
     const totalRevenue = await Payment.aggregate([
-      { $match: { status: "paid" } },
+      { $match: { status: "PAID" } },
       { $group: { _id: null, total: { $sum: "$amount" } } },
     ]);
 
     const monthlyRevenue = await Payment.aggregate([
       {
         $match: {
-          status: "paid",
+          status: "PAID",
           createdAt: {
             $gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
           },
@@ -138,6 +178,7 @@ const dashboardStats = async (req, res) => {
     });
   }
 };
+
 // Get all enrollments with user and course details
 const getAllEnrollments = async (req, res) => {
   try {
@@ -224,7 +265,7 @@ const getMonthlyPaymentReminders = async (req, res) => {
         (payment) =>
           payment.month === currentMonth &&
           payment.year === currentYear &&
-          payment.status === "paid"
+          payment.status === "PAID"
       );
 
       if (!hasCurrentMonthPayment) {
@@ -254,11 +295,12 @@ const getMonthlyPaymentReminders = async (req, res) => {
 // Create/Update course
 const createCourse = async (req, res) => {
   try {
-    const { title, description, price, monthlyPrice, duration, image } =
+    const { title, slug, description, price, monthlyPrice, duration, image } =
       req.body;
 
     const course = new Course({
       title,
+      slug,
       description,
       price,
       monthlyPrice,
@@ -350,6 +392,16 @@ const getAllCoursesAdminView = async (req, res) => {
     });
   }
 };
+const getCurrentAdmin = async (req, res) => {
+  res.json({
+    success: true,
+    admin: {
+      id: req.admin._id,
+      username: req.admin.username,
+      email: req.admin.email,
+    },
+  });
+};
 
 module.exports = {
   getPaymentPendingUsers,
@@ -361,5 +413,7 @@ module.exports = {
   getAllEnrollments,
   login,
   logout,
+  register,
   dashboardStats,
+  getCurrentAdmin,
 };

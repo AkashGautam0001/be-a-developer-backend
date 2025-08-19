@@ -1,9 +1,9 @@
+const dotenv = require("dotenv");
+dotenv.config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const dotenv = require("dotenv");
-dotenv.config();
 
 const authRoutes = require("./routes/auth.routes");
 const courseRoutes = require("./routes/courses.routes");

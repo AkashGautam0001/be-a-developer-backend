@@ -3,8 +3,10 @@ const adminControllers = require("../controllers/admin.controller");
 const { authenticateAdmin } = require("../middlewares/auth.middlewares");
 const router = express.Router();
 
+router.post("/register", adminControllers.register);
 router.post("/login", adminControllers.login);
 router.post("/logout", authenticateAdmin, adminControllers.logout);
+router.get("/me", authenticateAdmin, adminControllers.getCurrentAdmin);
 router.get(
   "/dashboard-stats",
   authenticateAdmin,

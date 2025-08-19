@@ -24,6 +24,10 @@ router.post(
   // authenticateUser,
   paymentControllers.verifyCoursePayment
 );
-router.post("/webhook", paymentControllers.razorpayWebhook);
+router.post(
+  "/webhook",
+  express.raw({ type: "application/json" }),
+  paymentControllers.razorpayWebhook
+);
 
 module.exports = router;

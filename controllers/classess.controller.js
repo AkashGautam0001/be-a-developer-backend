@@ -13,7 +13,7 @@ const getClassesOfEnrollmentsByCourseId = async (req, res) => {
     const enrollment = await Enrollment.findOne({
       user: req.user._id,
       course: courseId,
-      status: { $in: ["confirmed", "active"] },
+      status: { $in: ["CONFIRMED", "ACTIVE"] },
     });
 
     if (!enrollment) {
@@ -24,21 +24,25 @@ const getClassesOfEnrollmentsByCourseId = async (req, res) => {
     }
 
     let classes;
+    classes = await Class.find({
+      course: courseId,
+      isActive: true,
+    }).sort({ scheduledAt: 1 });
 
-    if (enrollment.status === "confirmed" && !enrollment.paymentMethod) {
-      // Show only demo classes
-      classes = await Class.find({
-        course: courseId,
-        type: "DEMO",
-        isActive: true,
-      }).sort({ scheduledAt: 1 });
-    } else if (enrollment.status === "ACTIVE") {
-      // Show all classes
-      classes = await Class.find({
-        course: courseId,
-        isActive: true,
-      }).sort({ scheduledAt: 1 });
-    }
+    // if (enrollment.status === "confirmed" && !enrollment.paymentMethod) {
+    //   // Show only demo classes
+    //   classes = await Class.find({
+    //     course: courseId,
+    //     type: "DEMO",
+    //     isActive: true,
+    //   }).sort({ scheduledAt: 1 });
+    // } else if (enrollment.status === "ACTIVE") {
+    //   // Show all classes
+    //   classes = await Class.find({
+    //     course: courseId,
+    //     isActive: true,
+    //   }).sort({ scheduledAt: 1 });
+    // }
 
     res.json({
       success: true,
@@ -74,7 +78,7 @@ const createClass = async (req, res) => {
       zoomLink,
       scheduledAt: new Date(scheduledAt),
       duration,
-      type: type || "regular",
+      type: type || "REGULAR",
     });
 
     await newClass.save();

@@ -5,9 +5,10 @@ const User = require("../models/user.model");
 //router.post("/", authenticateUser, createEnrollment);
 const createEnrollment = async (req, res) => {
   try {
-    const { courseId, name, phone, email, address, city, state, pincode, age } =
+    const { slug, name, phone, email, address, city, state, pincode, age } =
       req.body;
 
+    const courseId = await Course.findOne({ slug }).select("_id");
     // Validate required fields
     if (
       !courseId ||
@@ -92,7 +93,7 @@ const createEnrollment = async (req, res) => {
 const getMyEnrollments = async (req, res) => {
   try {
     const enrollments = await Enrollment.find({
-      user: "6898581a5cb7409300a71f0d",
+      user: req.user._id,
     })
       .populate("course")
       .sort({ createdAt: -1 });

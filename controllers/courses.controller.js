@@ -18,10 +18,14 @@ const getAllActiveCourses = async (req, res) => {
 };
 
 // Get single course
-// router.get('/:id',
 const getSingleCourse = async (req, res) => {
   try {
-    const course = await Course.findById(req.params.id);
+    // const course = await Course.findOne({
+    //   $or: [{ slug: req.params.slug }, { _id: req.params.slug }],
+    // });
+
+    const course = await Course.findOne({ slug: req.params.slug });
+    console.log(course);
 
     if (!course) {
       return res.status(404).json({
@@ -47,7 +51,7 @@ const getSingleCourse = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Server error",
+      message: error.message,
     });
   }
 };
