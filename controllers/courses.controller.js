@@ -37,7 +37,7 @@ const getSingleCourse = async (req, res) => {
     // Get demo classes
     const demoClasses = await Class.find({
       course: course._id,
-      type: "DEMO",
+      type: "WEBINAR",
       isActive: true,
     }).sort({ scheduledAt: 1 });
 
