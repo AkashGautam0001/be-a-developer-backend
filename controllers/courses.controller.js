@@ -40,7 +40,7 @@ const getSingleCourse = async (req, res) => {
       type: "WEBINAR",
       isActive: true,
     }).sort({ scheduledAt: 1 });
-
+    console.log("Demo Classes", demoClasses);
     res.json({
       success: true,
       course: {

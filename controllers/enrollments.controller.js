@@ -5,22 +5,12 @@ const User = require("../models/user.model");
 //router.post("/", authenticateUser, createEnrollment);
 const createEnrollment = async (req, res) => {
   try {
-    const { slug, name, phone, email, address, city, state, pincode, age } =
-      req.body;
+    const { slug, name, phone, email } = req.body;
 
     const courseId = await Course.findOne({ slug }).select("_id");
+
     // Validate required fields
-    if (
-      !courseId ||
-      !name ||
-      !phone ||
-      !email ||
-      !address ||
-      !city ||
-      !state ||
-      !pincode ||
-      !age
-    ) {
+    if (!courseId || !name || !phone || !email) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
@@ -58,11 +48,6 @@ const createEnrollment = async (req, res) => {
         name,
         phone,
         email,
-        address,
-        city,
-        state,
-        pincode,
-        age,
       });
       await user.save();
     }
