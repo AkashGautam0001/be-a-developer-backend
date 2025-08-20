@@ -36,7 +36,7 @@ const createEnrollment = async (req, res) => {
         course: courseId,
       });
 
-      if (existingEnrollment) {
+      if (existingEnrollment.status === "CONFIRMED") {
         return res.status(400).json({
           success: false,
           message: "Already enrolled in this course",

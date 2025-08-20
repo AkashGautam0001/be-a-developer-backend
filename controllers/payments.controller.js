@@ -140,7 +140,7 @@ const verifyConfirmationPayment = async (req, res) => {
     await enrollment.save();
 
     // Send invoice email
-    await sendInvoiceEmail(payment, enrollment);
+    // await sendInvoiceEmail(payment, enrollment);
 
     res.json({
       success: true,
